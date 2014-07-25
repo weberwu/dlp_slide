@@ -1,0 +1,60 @@
+An Automatic Part of Speech Tagger
+========================================================
+author: Weber, Wu
+date: 2014/07/25
+
+
+Part of Speech Tagging
+========================================================
+
+- Part of speech (POS) tagging is a common problem in the field of natural language processing
+- The goal of this problem is to predict POS of each word in sentences.
+- Following is an example of POS tagging result for sentence "He is so handsome"
+
+```{r,echo=F}
+Sys.setenv(JAVA_HOME="")
+example <- data.frame(cbind(c("He","is","so","handsome"),c("PRP","VBZ","RB","JJ")))
+names(example) <- c('word','POS')
+example
+```
+
+Diffculty
+========================================================
+- There are many tool for POS tagging. for example, library 'openNLP' contains POS tagger in it
+- However, it may not easy to use for those people who are not familiar with programming language
+- Using shiny as a wrapper, we can develope POS tagging tools for users
+
+<img src="openNLP.png"  alt="opennlp" width=1200 />
+
+openNLP
+========================================================
+- Apache OpenNLP library is a machine learning based toolkit for the processing of natural language text written in Java.
+- A R interface is provided. Therefore, we can utilize the tool easily and wrap it with shiny without much difficulties.
+- function "Maxent_POS_Tag_Annotator" in the library can be used to predict POS tagging of words in sentences.
+
+
+openNLP(cont.)
+========================================================
+- Here is a example of openNLP in R
+```{r,echo=FALSE}
+library(openNLP); require(NLP) 
+```
+```{r,width=60}
+s <- as.String("He is lazy")
+sent_token_annotator <- Maxent_Sent_Token_Annotator()
+word_token_annotator <- Maxent_Word_Token_Annotator()
+a2 <- annotate(s, list(sent_token_annotator, word_token_annotator))
+pos_tag_annotator <- Maxent_POS_Tag_Annotator()
+a3 <- annotate(s, pos_tag_annotator, a2)
+a3w <- subset(a3, type == "word")
+tags <- sapply(a3w$features, `[[`, "POS")
+sprintf("%s/%s", s[a3w], tags)
+```
+
+The Application
+========================================================
+- Wraping the function by shiny
+- The app can be found here
+  - http://pmlshinyserver.shinyapps.io/POStagger
+- And let's try it
+<img src="app.png"  alt="app" width=1200 />
